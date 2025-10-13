@@ -1,5 +1,6 @@
 package kg.demo.saga.orch.api;
-import kg.demo.saga.contracts.*; import org.springframework.web.bind.annotation.*; import org.springframework.amqp.rabbit.core.RabbitTemplate; import org.springframework.beans.factory.annotation.Value;
+import kg.demo.saga.contracts.command.DebitCommand;
+import org.springframework.web.bind.annotation.*; import org.springframework.amqp.rabbit.core.RabbitTemplate; import org.springframework.beans.factory.annotation.Value;
 import java.math.BigDecimal; import java.util.*;
 
 @RestController @RequestMapping("/api/payments")

@@ -1,5 +1,9 @@
 package kg.demo.saga.tx.messaging;
-import kg.demo.saga.contracts.*; import kg.demo.saga.tx.service.TxService;
+import kg.demo.saga.contracts.command.CancelCommand;
+import kg.demo.saga.contracts.command.ConfirmCommand;
+import kg.demo.saga.contracts.transaction.DebitFailed;
+import kg.demo.saga.contracts.transaction.MoneyDebited;
+import kg.demo.saga.tx.service.TxService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener; import org.springframework.stereotype.Component;
 
 @Component

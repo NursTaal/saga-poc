@@ -1,5 +1,7 @@
 package kg.demo.saga.wallet.messaging;
-import kg.demo.saga.contracts.*; import kg.demo.saga.wallet.service.WalletService; import org.springframework.stereotype.Component; import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import kg.demo.saga.contracts.command.DebitCommand;
+import kg.demo.saga.contracts.transaction.TransactionCreated;
+import kg.demo.saga.wallet.service.WalletService; import org.springframework.stereotype.Component; import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 @Component
 public class Listeners {

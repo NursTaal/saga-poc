@@ -1,5 +1,8 @@
 package kg.demo.saga.wallet.service;
-import com.fasterxml.jackson.databind.ObjectMapper; import kg.demo.saga.contracts.*; import kg.demo.saga.wallet.domain.*; import kg.demo.saga.wallet.repo.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kg.demo.saga.contracts.transaction.DebitFailed;
+import kg.demo.saga.contracts.transaction.MoneyDebited;
+import kg.demo.saga.wallet.domain.*; import kg.demo.saga.wallet.repo.*;
 import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal; import java.util.*;
 
