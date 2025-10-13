@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  rabbit:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports: ["5432:5432"]
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d

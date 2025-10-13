@@ -1,0 +1,3 @@
+CREATE DATABASE tx_db;
+CREATE DATABASE wallet_db;
+CREATE DATABASE orchestrator_db;

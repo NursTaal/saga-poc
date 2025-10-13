@@ -1,0 +1,38 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: transaction-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tx_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  flyway:
+    enabled: true
+
+app:
+  exchanges:
+    events: domain.evt
+    commands: saga.cmd
+  queues:
+    confirm: transaction.confirm.q
+    cancel: transaction.cancel.q
+  routing:
+    events:
+      txCreated: tx.created
+      txConfirmed: tx.confirmed
+    commands:
+      confirm: cmd.confirm
+      cancel: cmd.cancel

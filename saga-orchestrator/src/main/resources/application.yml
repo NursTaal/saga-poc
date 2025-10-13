@@ -1,0 +1,25 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: saga-orchestrator
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+app:
+  exchanges:
+    events: domain.evt
+    commands: saga.cmd
+  queues:
+    onDebited: orchestrator.on.debited.q
+    onDebitFailed: orchestrator.on.debitFailed.q
+  routing:
+    commands:
+      debit: cmd.debit
+      confirm: cmd.confirm
+      cancel: cmd.cancel
+    events:
+      debited: wallet.debited
+      debitFailed: wallet.debitFailed

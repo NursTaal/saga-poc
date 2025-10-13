@@ -1,0 +1,36 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+app:
+  exchanges:
+    events: domain.evt
+    commands: saga.cmd
+  queues:
+    debit: wallet.debit.q
+    onTxCreated: wallet.on.txCreated.q
+  routing:
+    commands:
+      debit: cmd.debit
+    events:
+      txCreated: tx.created
+      debited: wallet.debited
+      debitFailed: wallet.debitFailed
