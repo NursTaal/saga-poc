@@ -2,6 +2,8 @@ package kg.demo.saga.wallet.messaging;
 
 import kg.demo.saga.wallet.repo.OutboxRepository;
 import kg.demo.saga.wallet.domain.OutboxEventEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import java.util.*;
 
 @Component
 public class OutboxPublisher {
+    private static final Logger log = LoggerFactory.getLogger(OutboxPublisher.class);
     private final OutboxRepository repo;
     private final RabbitTemplate amqp;
     private final String eventsEx;
@@ -23,9 +26,11 @@ public class OutboxPublisher {
 
     @Scheduled(fixedDelay = 200)
     public void publish() {
+        log.info("Wallet Publishing events to outbox");
         List<OutboxEventEntity> batch = repo.findTop100ByStatusOrderByCreatedAtAsc("NEW");
         for (var e : batch) {
             try {
+                log.info("Publishing events to outbox {}", e);
                 amqp.convertAndSend(eventsEx, e.getType(), e.getPayload());
                 e.setStatus("SENT");
             } catch (Exception ex) {

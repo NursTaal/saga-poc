@@ -1,17 +1,18 @@
 package kg.demo.saga.tx.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class RabbitConfig {
-    @Bean
+    @Bean("events")
     TopicExchange events(@Value("${app.exchanges.events}") String name) {
         return new TopicExchange(name, true, false);
     }
 
-    @Bean
+    @Bean("commands")
     TopicExchange commands(@Value("${app.exchanges.commands}") String name) {
         return new TopicExchange(name, true, false);
     }
@@ -27,12 +28,18 @@ public class RabbitConfig {
     }
 
     @Bean
-    Binding confirmBind(Queue confirmQ, TopicExchange commands, @Value("${app.routing.commands.confirm}") String rk) {
+    Binding confirmBind(@Qualifier("confirmQ")Queue confirmQ,
+                        @Qualifier("commands") TopicExchange commands,
+                        @Value("${app.routing.commands.confirm}") String rk) {
+
         return BindingBuilder.bind(confirmQ).to(commands).with(rk);
     }
 
     @Bean
-    Binding cancelBind(Queue cancelQ, TopicExchange commands, @Value("${app.routing.commands.cancel}") String rk) {
+    Binding cancelBind(@Qualifier("cancelQ") Queue cancelQ,
+                       @Qualifier("commands") TopicExchange commands,
+                       @Value("${app.routing.commands.cancel}") String rk) {
+
         return BindingBuilder.bind(cancelQ).to(commands).with(rk);
     }
 }

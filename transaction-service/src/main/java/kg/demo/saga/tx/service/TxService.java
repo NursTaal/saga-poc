@@ -1,10 +1,13 @@
 package kg.demo.saga.tx.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kg.demo.saga.contracts.transaction.TransactionConfirmed;
 import kg.demo.saga.contracts.transaction.TransactionCreated;
 import kg.demo.saga.tx.domain.*;
 import kg.demo.saga.tx.repo.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import java.math.BigDecimal;
 
 @Service
 public class TxService {
+    private static final Logger log = LoggerFactory.getLogger(TxService.class);
     private final TransactionRepository txRepo;
     private final OutboxRepository outbox;
     private final ObjectMapper om;
@@ -25,11 +29,12 @@ public class TxService {
 
     @Transactional
     public UUID create(UUID sagaId, UUID userId, BigDecimal amount, boolean failDebit) {
+        log.info("Creating transaction for userId={}, amount={}, failDebit={}", userId, amount, failDebit);
         var tx = new TransactionEntity(userId, amount);
         txRepo.save(tx);
         try {
             var evt = new TransactionCreated(sagaId, tx.getId(), userId, amount, failDebit);
-            outbox.save(new OutboxEventEntity("Transaction", tx.getId().toString(), "tx.created", om.writeValueAsString(evt)));
+            outbox.save(new OutboxEventEntity("Transaction", tx.getId().toString(), "tx.created", om.convertValue(evt, JsonNode.class)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -38,11 +43,12 @@ public class TxService {
 
     @Transactional
     public void confirm(UUID sagaId, UUID txnId) {
+        log.info("Confirming transaction, sagaId={} txnId={}", sagaId, txnId);
         var tx = txRepo.findById(txnId).orElseThrow();
         tx.confirm();
         txRepo.save(tx);
         try {
-            outbox.save(new OutboxEventEntity("Transaction", txnId.toString(), "tx.confirmed", om.writeValueAsString(new TransactionConfirmed(sagaId, txnId))));
+            outbox.save(new OutboxEventEntity("Transaction", txnId.toString(), "tx.confirmed", om.convertValue(new TransactionConfirmed(sagaId, txnId), JsonNode.class)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -50,6 +56,7 @@ public class TxService {
 
     @Transactional
     public void cancel(UUID txnId) {
+        log.info("Canceling transaction, txnId={}", txnId);
         var tx = txRepo.findById(txnId).orElseThrow();
         tx.cancel();
         txRepo.save(tx);

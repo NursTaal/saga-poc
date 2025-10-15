@@ -1,6 +1,9 @@
 package kg.demo.saga.wallet.domain;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -13,10 +16,12 @@ public class OutboxEventEntity {
     private String aggregateType;
     private String aggregateId;
     private String type;
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String payload;
+    private JsonNode payload;
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String headers;
+    private JsonNode  headers;
     private String status;
     private Integer attempts;
     private Instant createdAt;
@@ -25,7 +30,7 @@ public class OutboxEventEntity {
     protected OutboxEventEntity() {
     }
 
-    public OutboxEventEntity(String aggType, String aggId, String type, String payload) {
+    public OutboxEventEntity(String aggType, String aggId, String type, JsonNode payload) {
         this.id = UUID.randomUUID();
         this.aggregateType = aggType;
         this.aggregateId = aggId;
@@ -40,7 +45,7 @@ public class OutboxEventEntity {
         return type;
     }
 
-    public String getPayload() {
+    public JsonNode getPayload() {
         return payload;
     }
 
