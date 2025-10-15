@@ -21,6 +21,14 @@ public class TransactionEntity {
     protected TransactionEntity() {
     }
 
+    public TransactionEntity(UUID id, UUID userId, BigDecimal amount, String status) {
+        this.id = id;
+        this.userId = userId;
+        this.amount = amount;
+        this.status = status;
+        this.createdAt = Instant.now();
+    }
+
     public TransactionEntity(UUID userId, BigDecimal amount) {
         this.id = UUID.randomUUID();
         this.userId = userId;

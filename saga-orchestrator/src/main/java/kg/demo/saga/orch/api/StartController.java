@@ -1,5 +1,6 @@
 package kg.demo.saga.orch.api;
 
+import kg.demo.saga.contracts.command.CreateTxnCommand;
 import kg.demo.saga.contracts.command.DebitCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +28,12 @@ public class StartController {
     public Map<String, Object> start(@RequestParam("userId") UUID userId,
                                      @RequestParam("amount") BigDecimal amount,
                                      @RequestParam(name = "failDebit", defaultValue = "false") boolean failDebit) {
-        log.info("start {}, {}, {}", userId, amount, failDebit);
         UUID sagaId = UUID.randomUUID();
         UUID txnId = UUID.randomUUID();
-        log.info("sagaId={}, txnId={}", sagaId, txnId);
+        log.info("start userId={}, amount={}, failDebit={} sagaId={}, txnId={}", userId, amount, failDebit, sagaId, txnId);
         // start the saga by sending the first command
-        amqp.convertAndSend(cmdEx, "cmd.debit", new DebitCommand(sagaId, txnId, userId, amount, failDebit));
+        amqp.convertAndSend(cmdEx, "cmd.create", new CreateTxnCommand(sagaId, txnId, userId, amount));
+        amqp.convertAndSend(cmdEx, "cmd.debit",  new DebitCommand(sagaId, txnId, userId, amount, failDebit));
         return Map.of("sagaId", sagaId, "txnId", txnId, "status", "STARTED");
     }
 }

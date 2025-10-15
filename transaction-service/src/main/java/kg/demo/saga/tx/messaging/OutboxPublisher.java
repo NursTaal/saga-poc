@@ -26,7 +26,6 @@ public class OutboxPublisher {
 
     @Scheduled(fixedDelay = 200)
     public void publish() {
-        log.info("OutboxPublisher: looking for new events...");
         List<OutboxEventEntity> batch = repo.findTop100ByStatusOrderByCreatedAtAsc("NEW");
         for (var e : batch) {
             try {

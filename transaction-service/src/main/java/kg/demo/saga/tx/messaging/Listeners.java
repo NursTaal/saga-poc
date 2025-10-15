@@ -2,6 +2,7 @@ package kg.demo.saga.tx.messaging;
 
 import kg.demo.saga.contracts.command.CancelCommand;
 import kg.demo.saga.contracts.command.ConfirmCommand;
+import kg.demo.saga.contracts.command.CreateTxnCommand;
 import kg.demo.saga.contracts.transaction.DebitFailed;
 import kg.demo.saga.contracts.transaction.MoneyDebited;
 import kg.demo.saga.tx.service.TxService;
@@ -17,6 +18,12 @@ public class Listeners {
 
     public Listeners(TxService s) {
         this.service = s;
+    }
+
+    // Orchestration: создание транзакции
+    @RabbitListener(queues = "transaction.create.q")
+    public void onCreate(CreateTxnCommand cmd) {
+        service.createFromOrchestrator(cmd.sagaId(), cmd.txnId(), cmd.userId(), cmd.amount());
     }
 
     // Orchestration: подтверждение/отмена по командам

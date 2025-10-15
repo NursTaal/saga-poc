@@ -28,7 +28,7 @@ public class RabbitConfig {
     }
 
     @Bean
-    Binding confirmBind(@Qualifier("confirmQ")Queue confirmQ,
+    Binding confirmBind(@Qualifier("confirmQ") Queue confirmQ,
                         @Qualifier("commands") TopicExchange commands,
                         @Value("${app.routing.commands.confirm}") String rk) {
 
@@ -41,5 +41,16 @@ public class RabbitConfig {
                        @Value("${app.routing.commands.cancel}") String rk) {
 
         return BindingBuilder.bind(cancelQ).to(commands).with(rk);
+    }
+
+    @Bean("createQ")
+    Queue createQ() {
+        return QueueBuilder.durable("transaction.create.q").build();
+    }
+
+    @Bean
+    Binding createBind(@Qualifier("createQ") Queue createQ,
+                       @Qualifier("commands") TopicExchange commands) {
+        return BindingBuilder.bind(createQ).to(commands).with("cmd.create");
     }
 }
